@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../queue_and_stack')
+sys.path.append('C:/Users/nchib/DS5/Data-Structures/queue_and_stack')
 from dll_queue import Queue
 from dll_stack import Stack
 
@@ -12,21 +12,66 @@ class BinarySearchTree:
 
     # Insert the given value into the tree
     def insert(self, value):
-        pass
+        if value is None:
+            return
+        
+        #BST was empty
+        elif self.value is None:
+            self.value = BinarySearchTree(value)
+        
+        #insert into right search tree
+        elif value >= self.value:
+            #TBC
+            if self.right is None:
+                self.right = BinarySearchTree(value)
+            else:
+                self.right.insert(value)
+        #insert into left subtree
+        else:
+            #TBC
+            if self.left is None:
+                self.left = BinarySearchTree(value)
+            else:
+                self.left.insert(value)
 
     # Return True if the tree contains the value
     # False if it does not
     def contains(self, target):
-        pass
+        if self.value == target:
+            return True
+        
+        elif self.value is None:
+            return False
+
+        else: 
+            if target >= self.value:
+                self.right.contains(target)
+            else:
+                self.left.contains(target)
 
     # Return the maximum value found in the tree
     def get_max(self):
-        pass
+        if self.right is None:
+            return self.value
+        else:
+            self.right.get_max()
 
     # Call the function `cb` on the value of each node
     # You may use a recursive or iterative approach
     def for_each(self, cb):
-        pass
+        if self.left is None:
+            return self.value.cb
+        elif self.right is None:
+            return self.value.cb
+        else:
+            self.right.for_each()
+            self.left.for_each()
+        
+        #1. Base case:
+        #left is None or Right is None
+
+        #2. Recursive case:
+        # Go Left and Right
 
     # DAY 2 Project -----------------------
 
