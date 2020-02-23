@@ -1,6 +1,5 @@
 from doubly_linked_list import ListNode
 from doubly_linked_list import DoublyLinkedList
-from collections import OrderedDict
 
 class LRUCache:
     """
@@ -12,9 +11,9 @@ class LRUCache:
     """
     def __init__(self, limit=10):
         self.limit = limit
-        self.no_nodes = 0
-        self.dll = DoublyLinkedList()
-        self.storage = OrderedDict()
+        self.size = 0
+        self.order = DoublyLinkedList()
+        self.storage = dict()
 
     """
     Retrieves the value associated with the given key. Also
@@ -24,16 +23,22 @@ class LRUCache:
     key-value pair doesn't exist in the cache.
     """
     def get(self, key):
-        if key not in self.storage:
-            return None
-        else:
+        if key in self.storage:
             node = self.storage[key]
-            value = node.value
-            self.dll.delete(node)
-            node = ListNode(key, value)
-            self.storage[key] = node
-            self.dll.add_to_head(key, value)
-            return node.value
+            self.order.move_to_end(node)
+            return node.value[1]
+        else:
+            return None
+        # if key not in self.storage:
+        #     return None
+        # else:
+        #     node = self.storage[key]
+        #     value = node.value
+        #     self.dll.delete(node)
+        #     node = ListNode(key, value)
+        #     self.storage[key] = node
+        #     self.dll.add_to_head(key, value)
+        #     return node.value
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -46,19 +51,40 @@ class LRUCache:
     the newly-specified value.
     """
     def set(self, key, value):
-        if key not in self.storage:
-            node = ListNode(key, value)
-            self.storage[key] = node
-            if self.no_nodes < self.limit:
-                self.dll.add_to_head(key, value)
-                self.no_nodes += 1
-            else:
-                curr_tail = self.dll.remove_from_tail()
-                self.storage.pop(curr_tail.key)
-                self.dll.add_to_head(key, value)
-        else:
+        #Create a node of key not found and move to front
+        #move node to front if key found
+        #if full remove last node from linked list and dictionary
+        
+        if key in self.storage:
             node = self.storage[key]
-            self.dll.delete(node)
-            node = ListNode(key,value)
-            self.storage[key] = node
-            self.dll.add_to_head(key, value)
+            node.value = (key, value)
+            self.order.move_to_end(node)
+            return
+
+        if self.size == self.limit:
+            del self.storage[self.order.head.value[0]]
+            self.order.remove_from_head()
+            self.size -= 1
+
+
+        self.order.add_to_tail((key, value))
+        self.storage[key] = self.order.tail
+        self.size += 1
+
+
+        # if key not in self.storage:
+        #     node = ListNode(key, value)
+        #     self.storage[key] = node
+        #     if self.no_nodes < self.limit:
+        #         self.dll.add_to_head(key, value)
+        #         self.no_nodes += 1
+        #     else:
+        #         curr_tail = self.dll.remove_from_tail()
+        #         self.storage.pop(curr_tail.key)
+        #         self.dll.add_to_head(key, value)
+        # else:
+        #     node = self.storage[key]
+        #     self.dll.delete(node)
+        #     node = ListNode(key,value)
+        #     self.storage[key] = node
+        #     self.dll.add_to_head(key, value)
